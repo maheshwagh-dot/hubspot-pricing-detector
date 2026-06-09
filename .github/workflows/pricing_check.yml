@@ -2,8 +2,8 @@ name: Pricing Discussion Detector
 
 on:
   schedule:
-    - cron: '0 9,18 * * 1-5'   # 9am and 6pm, weekdays (UTC)
-  workflow_dispatch:             # manual trigger anytime
+    - cron: '0 9,18 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   detect:
