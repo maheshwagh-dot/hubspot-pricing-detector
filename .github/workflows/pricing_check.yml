@@ -1,0 +1,34 @@
+name: Pricing Discussion Detector
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # Runs every 6 hours
+                              # Change to '0 */1 * * *' for hourly
+  workflow_dispatch:          # Also allows manual trigger anytime
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pricing detection
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LOOKBACK_HOURS: 7       # Slightly over 6h to avoid gaps
+        run: python detect_pricing.py
+
+      - name: Upload audit log
+        uses: actions/upload-artifact@v3
+        with:
+          name: pricing-detection-log
+          path: pricing_detection_log.json
